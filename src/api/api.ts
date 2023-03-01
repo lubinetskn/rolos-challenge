@@ -14,14 +14,29 @@ export interface PostsResponse {
   total: number;
 }
 
-export async function getPosts(): Promise<PostsResponse> {
-  const response = await fetch('https://dummyjson.com/posts');
+const API_URL = 'https://dummyjson.com/posts';
+
+export async function getAllPosts(): Promise<PostsResponse> {
+  const response = await fetch(API_URL);
 
   return response.json();
 }
 
+export async function getPosts(limit: number, skip: number): Promise<PostsResponse> {
+  try {
+    const response = await fetch(`${API_URL}?limit=${limit}&skip=${skip}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  } catch (error) {
+    console.error(`Error fetching posts: ${error}`);
+    throw error;
+  }
+}
+
 export async function getPost(postId: Post['id']): Promise<Post> {
-  const response = await fetch(`https://dummyjson.com/posts/${postId}`);
+  const response = await fetch(`${API_URL}/${postId}`);
 
   return response.json();
 }
